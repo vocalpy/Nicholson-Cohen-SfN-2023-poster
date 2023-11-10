@@ -1,0 +1,29 @@
+
+[LEARNCURVE]
+model = "TweetyNet"
+normalize_spectrograms = "Yes"
+batch_size = 16
+num_epochs = 15
+val_step = 1000
+ckpt_step = 500
+patience = 4
+num_workers = 16
+device = "cuda"
+root_results_dir = "./results/multiclass/BFSongRepo/all-birds/TweetyNet"
+dataset_path = "data/prep/multiclass/BFSongRepo/all-birds/all-birds-vak-frame-classification-dataset-generated-231025_173401"
+
+[LEARNCURVE.train_dataset_params]
+window_size = 176
+
+[LEARNCURVE.val_transform_params]
+window_size = 176
+
+[LEARNCURVE.post_tfm_kwargs]
+majority_vote = true
+min_segment_dur = 0.01
+
+[TweetyNet.optimizer]
+lr = 0.001
+
+[TweetyNet.network]
+hidden_size = 256
