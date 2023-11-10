@@ -1,0 +1,14 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "framenets"
+authors = [{name = "David Nicholson", email = "nickledave@users.noreply.github.com"}]
+description = "package to benchmark frame classification models on segmentation and annotation of animal sounds"
+license = {file = "LICENSE"}
+classifiers = ["License :: OSI Approved :: MIT License"]
+version = "0.1.0"
+dependencies = [
+    "vak >= 1.0.0a3"
+]
