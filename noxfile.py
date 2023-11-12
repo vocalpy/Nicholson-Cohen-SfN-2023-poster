@@ -1,7 +1,6 @@
 import dataclasses
 import os
 import pathlib
-import shutil
 import tarfile
 import urllib.request
 
@@ -13,7 +12,7 @@ VENV_DIR = pathlib.Path('./.venv').resolve()
 
 
 @nox.session(python="3.10.7")
-def dev(session: nox.Session) -> None:
+def setup(session: nox.Session) -> None:
     """
     Sets up a python environment for the project.
 
@@ -34,7 +33,7 @@ def dev(session: nox.Session) -> None:
     python = os.fsdecode(VENV_DIR.joinpath("bin/python"))
 
     # NOTE we install vak with the specific commit used to run experiments
-    session.run(python, "python", "-m", "pip", "install", "vak @ git+https://github.com/vocalpy/vak/vak@e73f6a396770870c303c1c3574071b53971fc16c")
+    session.run(python, "-m", "pip", "install", "vak @ git+https://github.com/vocalpy/vak@e73f6a396770870c303c1c3574071b53971fc16c", external=True)
     # then we install everything else
     session.run(python, "-m", "pip", "install", "-e", ".", external=True)
 
