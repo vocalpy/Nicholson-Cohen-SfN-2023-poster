@@ -7,6 +7,38 @@ import urllib.request
 
 import nox
 
+
+DIR = pathlib.Path(__file__).parent.resolve()
+VENV_DIR = pathlib.Path('./.venv').resolve()
+
+
+@nox.session(python="3.10.7")
+def dev(session: nox.Session) -> None:
+    """
+    Sets up a python environment for the project.
+
+    This session will:
+    - Create a python virtualenv for the session
+    - Install the `virtualenv` cli tool into this environment
+    - Use `virtualenv` to create a global project virtual environment
+    - Invoke the python interpreter from the global project environment to install
+      the project and all its development dependencies.
+    """
+    session.install("virtualenv")
+    # VENV_DIR here is a pathlib.Path location of the project virtualenv
+    # e.g. .venv
+    session.run("virtualenv", os.fsdecode(VENV_DIR), silent=True)
+
+    # Use the venv's interpreter to install the project along with
+    # all it's dev dependencies, this ensures it's installed in the right way
+    python = os.fsdecode(VENV_DIR.joinpath("bin/python"))
+
+    # NOTE we install vak with the specific commit used to run experiments
+    session.run(python, "python", "-m", "pip", "install", "vak @ git+https://github.com/vocalpy/vak/vak@e73f6a396770870c303c1c3574071b53971fc16c")
+    # then we install everything else
+    session.run(python, "-m", "pip", "install", "-e", ".", external=True)
+
+
 @dataclasses.dataclass
 class DownloadItem:
     """Dataclass representing item to download:
@@ -127,7 +159,6 @@ TO_DOWNLOAD = [
 ]
 
 
-
 def copy_url(url: str, path: str) -> None:
     """Copy data from a url to a local file."""
     urllib.request.urlretrieve(url, path)
@@ -136,10 +167,14 @@ def copy_url(url: str, path: str) -> None:
 @nox.session(name='test-data-download-source')
 def download(session) -> None:
     """
-    Download and extract a .tar.gz file of 'source' test data, used by TEST_DATA_GENERATE_SCRIPT.
+    Download and extract the dataset and the results.
     """
-    session.log(f'Downloading dataset: {DATASET_URL}')
-    copy_url(url=SOURCE_TEST_DATA_URL, path=SOURCE_TEST_DATA_TAR)
-    session.log(f'Extracting downloaded tar: {SOURCE_TEST_DATA_TAR}')
-    with tarfile.open(SOURCE_TEST_DATA_TAR, "r:gz") as tf:
-        tf.extractall(path='.')
+    session.log(f'Downloading dataset and results')
+    for download_item in TO_DOWNLOAD:
+        session.log(
+            f"Downloading {download_item.name} from {download_item.url} to {download_item.path}"
+        )
+        copy_url(url=download_item.url, path=download_item.path)
+        session.log(f'Extracting downloaded tar: {download_item.path}')
+        with tarfile.open(download_item.path, "r:gz") as tf:
+            tf.extractall(path='.')
