@@ -53,6 +53,11 @@ cd Nicholson-Cohen-SfN-2023-poster
 
 ```nox -s setup```
 
+After that session runs, you can activate the virtual environment it creates like so:
+```console
+. .venv/bin/activate
+```
+
 ### Download dataset + results
 
 3. To test whether you can replicate experiments and analysis, you'll need to download the dataset and the results
@@ -77,6 +82,33 @@ To re-run any individual configuration file, run this command in the activated v
 python src/scripts/learncurve.py learncurve data/configs/NAME-OF-CONFIG.toml
 ```
 
-We provide bash scripts to re-run the experiments testing the effect of window size and of 
+We provide bash scripts to re-run the experiments testing the effect of window size 
+and of adding smoothing terms to the loss function.
+Note that these would take quite some time to run!
+But they capture the logic of the experiments.
+You would run these scripts in the virtual environment after activating it.
+Note that if you have a machine with multiple GPUs you will want to only run one config per GPU.
+This is because pytorch-lightning tries to run on multiple GPUs by default 
+but does so by running multiple copies of a script in different processes, 
+which breaks the logic in the loops used by vak to generate the learning curve.
+
+```console
+export CUDA_VISIBLE_DEVICES=0
+bash src/scripts/runall-window-size.sh
+```
+
+```console
+export CUDA_VISIBLE_DEVICES=0
+bash src/scripts/runall-loss-function.sh
+```
 
 ### Re-run analysis
+
+To re-run the analysis on the downloaded results, 
+or on your replication of the results,
+run the following scripts to generate summary data files.
+
+```console
+python src/scripts/analysis/summary-data-window-size.py
+python src/scripts/analysis/summary-data-loss-function.py
+```
