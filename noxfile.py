@@ -52,7 +52,7 @@ TO_DOWNLOAD = [
     DownloadItem(
         name="dataset",
         url="https://zenodo.org/records/10098250/files/all-birds-vak-frame-classification-dataset-generated-231025_173401.tar.gz",
-        path="data/prep/multiclass/all-birds-vak-frame-classification-dataset-generated-231025_173401.tar.gz",
+        path="data/prep/multiclass/BFSongRepo/all-birds-vak-frame-classification-dataset-generated-231025_173401.tar.gz",
     ),
     # ---- results
     DownloadItem(
@@ -163,7 +163,7 @@ def copy_url(url: str, path: str) -> None:
     urllib.request.urlretrieve(url, path)
 
 
-@nox.session(name='test-data-download-source')
+@nox.session
 def download(session) -> None:
     """
     Download and extract the dataset and the results.
