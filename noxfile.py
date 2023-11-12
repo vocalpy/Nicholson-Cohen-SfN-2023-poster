@@ -1,7 +1,10 @@
 import dataclasses
 import os
 import pathlib
+import shutil
+import sys
 import tarfile
+import time
 import urllib.request
 
 import nox
@@ -148,7 +151,7 @@ TO_DOWNLOAD = [
     DownloadItem(
         name="result",
         url="https://osf.io/uafmj/download",
-        path="results/multiclass/ results_231104_215302.tar.gz",
+        path="results/multiclass/results_231104_215302.tar.gz",
     ),
     DownloadItem(
         name="result",
@@ -158,9 +161,26 @@ TO_DOWNLOAD = [
 ]
 
 
+def reporthook(count, block_size, total_size):
+    """hook for urlretrieve that gives us a simple progress report
+    https://blog.shichao.io/2012/10/04/progress_speed_indicator_for_urlretrieve_in_python.html
+    """
+    global start_time
+    if count == 0:
+        start_time = time.time()
+        return
+    duration = time.time() - start_time
+    progress_size = int(count * block_size)
+    speed = int(progress_size / (1024 * duration))
+    percent = int(count * block_size * 100 / total_size)
+    sys.stdout.write("\r...%d%%, %d MB, %d KB/s, %d seconds passed" %
+                    (percent, progress_size / (1024 * 1024), speed, duration))
+    sys.stdout.flush()
+
+
 def copy_url(url: str, path: str) -> None:
     """Copy data from a url to a local file."""
-    urllib.request.urlretrieve(url, path)
+    urllib.request.urlretrieve(url, path, reporthook)
 
 
 @nox.session
@@ -174,6 +194,10 @@ def download(session) -> None:
             f"Downloading {download_item.name} from {download_item.url} to {download_item.path}"
         )
         copy_url(url=download_item.url, path=download_item.path)
+        session.log("\n")
         session.log(f'Extracting downloaded tar: {download_item.path}')
-        with tarfile.open(download_item.path, "r:gz") as tf:
-            tf.extractall(path='.')
+        shutil.unpack_archive(
+            filename=download_item.path,
+            extract_dir=pathlib.Path(download_item.path).parent,
+            format="gztar"
+        )
