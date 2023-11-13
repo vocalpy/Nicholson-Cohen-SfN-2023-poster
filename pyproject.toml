@@ -13,6 +13,7 @@ dependencies = [
     "pandas==2.0.2",
     "jupyterlab==4.0.1",
     "seaborn==0.12.2",
+    "torchinfo==1.8.0",
     # vak gets installed at a specific commit by the nox session before this file is used,
     # but we list the version here for completeness
     "vak==1.0.0a3",
