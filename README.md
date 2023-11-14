@@ -7,7 +7,7 @@ We compare two families of neural network models on the task of jointly segmenti
 
 ![schematic of segmenting and annnotating animal sounds](./doc/images/segment-annotate.png)
 
-recurrent neural networks (RNNs), like [TweetyNet](https://elifesciences.org/articles/63853), 
+recurrent neural networks (RNNs), like [TweetyNet](https://elifesciences.org/articles/63853),
 and temporal convolutional networks (TCNs) like [Deep Audio Segmenter (DAS)](https://elifesciences.org/articles/68837).
 
 ![schematic of recurrent neural networks and temporal convolutional networks](./doc/images/RNN-TCN.png)
@@ -17,13 +17,13 @@ and depending on factors like input size, TCNs may be faster at inference time a
 (although the engineering of RNNs continues to evolve
 and they can be much faster than models like Transformers for some tasks, see https://arxiv.org/abs/2303.06349).
 Here we show results for simple "vanilla" TCNs
-as originally described by [Bai et al](https://arxiv.org/abs/1803.01271),
+as originally described by [Bai et al 2018](https://arxiv.org/abs/1803.01271),
 instead of the WaveNet-like architectures used by DAS and related work like [SELD-TCN](https://arxiv.org/abs/2003.01609).
 
 We compare three different architectures:
 * TweetyNet, an RNN with a front end that extracts features from spectrograms using trained 2-D convolutions, like those used by neural networks for image classification
 * ConvTCN, which also has the exact same convolutional front end, but replaces the recurrent LSTM layer of TweetyNet with a "vanilla" TCN -- this architecture is simlar to SELD-TCN
-* The same TCN *without* the convolutional front end, where we simply apply a [1x1 convolution](https://www.youtube.com/watch?v=c1RBQzKsDCk) across the frequency bins of the spectrogram to reduce dimensionality down to the number of channels in the TCN, in the same way that DAS does.
+* The same TCN *without* the convolutional front end, where we instead apply a [1x1 convolution](https://www.youtube.com/watch?v=c1RBQzKsDCk) across the frequency bins of the spectrogram to reduce dimensionality down to the number of channels in the TCN, in the same way that DAS does. (The ConvTCN applies this operation to the features extracted by the 2-D convolutional network.)
 
 ![schematic of recurrent neural networks and temporal convolutional networks](./doc/images/models.png)
 
@@ -44,7 +44,9 @@ During training, all models are shown windows from spectrograms, drawn at random
 We found that for all models, bigger windows gave better performance.
 This is important, given that TweetyNet
 used a window size of 176, while DAS used an effective window size of 64
-(1024 audio samples that are "down-sampled" by a STFT to produce a spectrogram with 64 time bins).
+(1024 audio samples that are fed through a trainable STFT to produce a spectrogram with 64 time bins).
+Increasing the window size from 176 to 2000 resulted in an improvement in all metrics, for all models
+(We show results for additional window sizes below).
 
 We can see the effect of window size by looking at the frame error
 and the character error rate:
@@ -81,7 +83,7 @@ Drawing from that previous work,
 we adding smoothing terms to the loss function
 that penalize predictions that are locally inconsistent.
 The first, the temporal Mean Squared Error,
-simply computes the difference between predictions in neighboring bins.
+computes the difference between predictions in neighboring bins.
 A drawback of this loss is that it also penalizes correct predictions
 where we expect a boundary in the segmentation.
 To compensate for this, the Gaussian similarity temporal mean squared error
@@ -104,7 +106,7 @@ particularly in the TCNs.
 
 For readability, in the poster we compare only window sizes of 176 and 2000.
 We additionally tested a set of window sizes from 64 to 4000.
-Below we show those results; blue is before applying clean-ups 
+Below we show those results; blue is before applying clean-ups
 when post-processing, and orange is after clean-ups.
 These results further illustrate that larger window sizes improve performance,
 at least on this dataset,
