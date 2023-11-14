@@ -196,8 +196,13 @@ def download(session) -> None:
         copy_url(url=download_item.url, path=download_item.path)
         session.log("\n")
         session.log(f'Extracting downloaded tar: {download_item.path}')
+        if download_item.name == "result":
+            extract_dir = pathlib.Path(download_item.path).parent
+        elif download_item.name == "dataset":
+            extract_dir = "data/prep/multiclass"
+
         shutil.unpack_archive(
             filename=download_item.path,
-            extract_dir=pathlib.Path(download_item.path).parent,
+            extract_dir=,
             format="gztar"
         )
