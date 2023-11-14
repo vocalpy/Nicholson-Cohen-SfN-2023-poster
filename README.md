@@ -103,8 +103,10 @@ particularly in the TCNs.
 ### Full window size
 
 For readability, in the poster we compare only window sizes of 176 and 2000.
-We additionally tested a range of window sizes from 64 to 4000.
-These results further illustrate that smaller window sizes impair performance,
+We additionally tested a set of window sizes from 64 to 4000.
+Below we show those results; blue is before applying clean-ups 
+when post-processing, and orange is after clean-ups.
+These results further illustrate that larger window sizes improve performance,
 at least on this dataset,
 and suggest that a window size of 2000 is near the saturation of this effect,
 again at least for this specific dataset.
