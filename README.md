@@ -4,7 +4,14 @@ This is the code for a poster presented at the 2023 Society for Neuroscience mee
 "Benchmarking neural network models for acoustic behavior with vak and VocalPy"
 
 We compare two families of neural network models on the task of jointly segmenting and annotating animal sounds:
-recurrent neural networks (RNNs), like [TweetyNet](https://elifesciences.org/articles/63853), and temporal convolutional networks (TCNs) like [Deep Audio Segmenter (DAS)](https://elifesciences.org/articles/68837).
+
+![schematic of segmenting and annnotating animal sounds](./doc/images/segment-annotate.png)
+
+recurrent neural networks (RNNs), like [TweetyNet](https://elifesciences.org/articles/63853), 
+and temporal convolutional networks (TCNs) like [Deep Audio Segmenter (DAS)](https://elifesciences.org/articles/68837).
+
+![schematic of recurrent neural networks and temporal convolutional networks](./doc/images/RNN-TCN.png)
+
 It is important to compare the two since TCNs can be substantially faster to train,
 and depending on factors like input size, TCNs may be faster at inference time as well
 (although the engineering of RNNs continues to evolve
@@ -17,6 +24,8 @@ We compare three different architectures:
 * TweetyNet, an RNN with a front end that extracts features from spectrograms using trained 2-D convolutions, like those used by neural networks for image classification
 * ConvTCN, which also has the exact same convolutional front end, but replaces the recurrent LSTM layer of TweetyNet with a "vanilla" TCN -- this architecture is simlar to SELD-TCN
 * The same TCN *without* the convolutional front end, where we simply apply a [1x1 convolution](https://www.youtube.com/watch?v=c1RBQzKsDCk) across the frequency bins of the spectrogram to reduce dimensionality down to the number of channels in the TCN, in the same way that DAS does.
+
+![schematic of recurrent neural networks and temporal convolutional networks](./doc/images/models.png)
 
 To compare these two families of models,
 we use the neural network framework [vak](https://github.com/vocalpy/vakvocalpy) and a core package for acoustic communication research, [VocalPy](https://github.com/vocalpy/vocalpy),
