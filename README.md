@@ -1,5 +1,13 @@
 # Nicholson-Cohen-SfN-2023-poster
 
+## Citation
+
+To cite this work, please use the DOI:
+[![DOI](https://zenodo.org/badge/715719951.svg)](https://zenodo.org/doi/10.5281/zenodo.11181674)
+
+
+## About
+
 This is the code for a poster presented at the 2023 Society for Neuroscience meeting:
 "Benchmarking neural network models for acoustic behavior with vak and VocalPy"
 
